@@ -4,7 +4,7 @@ This documentation is about to passthrough a secondary GPU to a QEMU virtual mac
 ##### My system
 * OS: POP-OS 22.04 LTS
 * CPU: Intel 9400f
-* Primary GPU: RX 580
+* Primary GPU: RX 580GPU
 * Secondary GPU: RX 550
 * Motherboard: Asrock Fatal1ty B360M Performance
 ## Requeriments
@@ -364,7 +364,7 @@ Go to the VM settings and change to XML tab > Edit the XMl to change bus from sa
 
 Quick Boot into the Vitual Machine to check if its working
 
-# Add GPU Acelleration to the Virtual Machine (Finally)
+## Add GPU Acelleration to the Virtual Machine (Finally)
 Go to Virtual Machine Settings and Add Hardware
 In PCI Host Device search for you Secondary GPU (The one you want to passthrough) and add both the VGA than the audio. Some GPU has multiple devices, add them all. To check which IOMMU group are located your GPU, check for the host device numbering like 0000:02:00:0 and 0000:02:00:0, remember that you can always `lspci -nnk` to search for you graphics card.
 
@@ -421,11 +421,11 @@ options root=UUID=aff134fa-9f96-4f4f-9100-5c7635201d9b ro quiet loglevel=0 syste
 
 
 --------
-Verify the new boot options:
-sudo cat /etc/kernelstub/configuration
+Verify Current Boot Options:
+`sudo cat /etc/kernelstub/configuration`
 
 OUTPUT
-```
+```bash
 USER@pop-os:~$ sudo cat /etc/kernelstub/configuration
 {
   "default": {
@@ -458,8 +458,9 @@ USER@pop-os:~$ sudo cat /etc/kernelstub/configuration
     "config_rev": 3
   }
 }
-```
+```bash
 USER@pop-os:~$ sudo cat /proc/cmdline
+
 initrd=\EFI\Pop_OS-aff134fa-9f96-4f4f-9100-5c7635201d9b\initrd.img root=UUID=aff134fa-9f96-4f4f-9100-5c7635201d9b ro quiet loglevel=0 systemd.show_status=false splash intel_iommu=on iommu=pt video=efifb:off disable_idle_d3=1
 
 
