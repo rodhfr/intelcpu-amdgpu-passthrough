@@ -1,5 +1,5 @@
 # AMD GPU PASSTHROUGH IN POP OS 22.04 INTEL CPU
-This guide is about to passthrough a secondary GPU to a QEMU virtual machine running Windows. I will not be covering how to do this with single GPU (albeit is indeed doable you just have to setup software hooks to virt-manager), nor do I will cover CPU pinning at least for now.
+This documentation is about to passthrough a secondary GPU to a QEMU virtual machine running Windows. I will not be covering how to do this with single GPU (albeit is indeed doable you just have to setup software hooks to virt-manager), nor do I will cover CPU pinning for now.
 
 ##### My system
 * OS: POP-OS 22.04 LTS
@@ -14,11 +14,7 @@ This guide is about to passthrough a secondary GPU to a QEMU virtual machine run
 * Also check if Vt-x or AMD-V is also enable because this is needed to be able to spin virtual machines anyway
 * Your guest GPU ROM must support UEFI (pretty much anything after 2012)
 
-Dump you GPU ROM own or download it from https://www.techpowerup.com/vgabios/
 
-The ROM should be exactly as the one from your GPU, otherwise will not perform 100% or not at all
-
-Be cautious when dumping your own GPU ROM, the process of flashing and messing with hardware could be dangerous. Search a little about this before doing it...
 ## Recommended
 * Basic Linux bash knowledge. Terminal commands, navigating through files, creating and running scripts.
 * [Read Arch Wiki article](https://wiki.archlinux.org/title/PCI_passthrough_via_OVMF) about PCI Passthrough via OVMF
@@ -27,6 +23,13 @@ Be cautious when dumping your own GPU ROM, the process of flashing and messing w
 * Maybe learn a little how to use TTY in case you messes and your system doesn't boot anymore
 * Don't do this to your main production machine which you have sensitive data or could not spend a day or two troubleshooting to make this work
 * You may want a spare monitor connected to the passthrough GPU, this would be much better experience than SPICE connection that will hurt performance, and vnc is slow. As well as mouse and keyboard that can be passed to virtual machine.
+* Don't stick to this guide or any guide at all, your machine certainly have some differences and you probably will need to stray out so watch some youtube guides like these
+[Single GPU Passthrough Tutorial - KVM/VFIO | BlandManStudios](https://youtu.be/eTWf5D092VY)
+[GPU Pass-through On Linux/Virt-Manager | Mental Outlaw](https://youtu.be/KVDUs019IB8)
+[SWITCH TO POPOS 22.04 | How To Set Up A Windows Virtual Machine With Single GPU Passthrough | Frank Laterza](https://youtu.be/MrA9jW6iCuo)
+(Video In Portuguese, a nice in depth video of a real use case) [Games em Máquina Virtual com GPU Passthrough | Entendendo QEMU, KVM, Libvirt](https://youtu.be/IDnabc3DjYY)
+
+
 
 #### Before anything, always update your repositories and system
 
@@ -38,14 +41,14 @@ Be cautious when dumping your own GPU ROM, the process of flashing and messing w
 #### Download Windows ISO
 https://www.microsoft.com/pt-br/software-download/windows10ISO
 
-#### Download the Virtio Windows Drivers (You can also download and install these drivers already inside the virtual machine)
+#### Download the Virtio Windows Drivers 
 https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/stable-virtio/virtio-win.iso
 
 ## First, enable IOMMU on your bootloader
 Chances are your distro will use another booloader like grub, so search your parameters and be sure to do the next steps corretly for each boot loader. [Gentoo Wiki writes about grub bootloader config file ](https://wiki.gentoo.org/wiki/GPU_passthrough_with_libvirt_qemu_kvm)
 
 There is two ways of editing the bootloader the recommended way is to update via `sudo kernelstub -a "intel_iommu=on iommu=pt video=efifb:off"` more about `kernelstub --help`
-but i will teach the messy way also
+but i will teach the messy way additionally
 1) Pop-OS 22.04 use systemd-boot so the config file will be into /boot/efi/loader/entries folder
 2) Login into root user `sudo su -`
 3) `cd` into /boot/efi/loader/entries and `ls` to see the config file.
@@ -226,7 +229,7 @@ kernelstub.Installer : INFO     Making entry file for Pop!_OS
 kernelstub.Installer : INFO     Backing up old kernel
 kernelstub.Installer : INFO     No old kernel found, skipping
 ```
-The missing modules from amdgpu is due to the modern amd graphics cards using the open-source version of the driver instead of the old and deprecated amdgpu private driver.
+The missing modules from amdgpu is due to the modern amd graphics cards using the open-source version of the driver instead of the old and deprecated amdgpu proprietary driver.
 
 To update the config.
 
@@ -327,19 +330,38 @@ group = "YOURUSER"
 
 You have to logout the session to see any change in permitions.
 
-## Create Virtual Machine
-New VM > Local install Media > Browse Local > select the ISO you downloaded earlier > Foward > if there is a prompt about permissions, press yes. > Pick Memory, 4096 MB is bare minimum to windows 10 VM, 8192 should be more ok and half your machine Memory would be ok. The CPU cores doesn't matter will change later. > give it a name and BE SURE to check the box "Customize configuration before install". > Check if hypervisor is KVM, chipset is Q35 and be sure to change firmware to UEFI > CPUs tab check the box "Copy host CPU configuration" and click in Topology. Socket means the number o physical CPU dimms that you have into your motherboard, the cores are the physical cores and threads are the virtual cores, mine i5 9400f has 6 cores so i've put 3 cores and 2 threads (you can always change this things later). > Boot Options tab you set the CDROM to the top of the boot order. > Click Begin the Installation > Allow to capture mouse and keyboard (if appears) > Install windows normally turning down any telemetry that you can.
-
-When it's done, [download the virtio drivers](https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/stable-virtio/virtio-win.iso and install normally, You may install virtio-win-guest-tools in addition if gonna use remote desktoping > Turn down the machine.
-
-Go to the VM options and remove the 
-
-
-
 ### Activate the default libvirt network
 `virsh net-autostart default`
 
 `virsh net-start default`
+
+## Create Virtual Machine
+New VM > Local install Media > Browse Local > select the ISO you downloaded earlier > Foward > if there is a prompt about permissions, press yes. > Pick Memory, 4096 MB is bare minimum to windows 10 VM, 8192 should be more ok and half your machine Memory would be ok. The CPU cores doesn't matter will change later. > give it a name and BE SURE to check the box "Customize configuration before install". > Check if hypervisor is KVM, chipset is Q35 and be sure to change firmware to UEFI > CPUs tab check the box "Copy host CPU configuration" and click in Topology. Socket means the number o physical CPU dimms that you have into your motherboard, the cores are the physical cores and threads are the virtual cores, mine i5 9400f has 6 cores so i've put 3 cores and 2 threads (you can always change this things later). > Boot Options tab you set the CDROM to the top of the boot order. > Add Hardware > Storage > Browse for Virtio Driver in bus select VirtIO and apply. Click Begin the Installation > Allow to capture mouse and keyboard (if appears) > Enter the Advanced Install in Windows partitioner and add install the virtio driver, then resume to install Windows normally turning down any telemetry that you possibly can.
+
+When it's done, [download the virtio drivers](https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/stable-virtio/virtio-win.iso and install normally inside windows, You may install virtio-win-guest-tools in addition if gonna use remote desktoping > Turn down the machine.
+
+Change the virtual disk bus type
+Edit > Preferences > Enable XML editing
+Go to the VM settings and change to XML tab > Edit the XMl to change bus from sata to virtio and adress type from drive to pci and apply
+```xml
+<disk type="file" device="disk">
+  <driver name="qemu" type="qcow2"/>
+  <source file="/home/rodhfr/Documents/windows10/win10.qcow2"/>
+  <target dev="sda" bus="virtio"/>
+  <address type="pci" domain="0x0000" bus="0x07" slot="0x00" function="0x0"/>
+</disk>
+```
+
+Quick Boot into the Vitual Machine to check if its working
+
+# Add GPU Acelleration to the Virtual Machine (Finally)
+Go to Virtual Machine Settings and Add Hardware
+In PCI Host Device search for you Secondary GPU (The one you want to passthrough) and add both the VGA than the audio. Some GPU has multiple devices, add them all. To check which IOMMU group are located your GPU, check for the host device numbering like 0000:02:00:0 and 0000:02:00:0, remember that you can always `lspci -nnk` to search for you graphics card.
+
+Boot the virtual machine and test the new graphics card in device manager.
+You could now install the proprietary drivers for your GPU inside Windows.
+
+
 
 
 # Revert Changes
