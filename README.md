@@ -24,10 +24,14 @@ This documentation is about to passthrough a secondary GPU to a QEMU virtual mac
 * Don't do this to your main production machine which you have sensitive data or could not spend a day or two troubleshooting to make this work
 * You may want a spare monitor connected to the passthrough GPU, this would be much better experience than SPICE connection that will hurt performance, and vnc is slow. As well as mouse and keyboard that can be passed to virtual machine.
 * Don't stick to this guide or any guide at all, your machine certainly have some differences and you probably will need to stray out so watch some youtube guides like these
-[Single GPU Passthrough Tutorial - KVM/VFIO | BlandManStudios](https://youtu.be/eTWf5D092VY)
-[GPU Pass-through On Linux/Virt-Manager | Mental Outlaw](https://youtu.be/KVDUs019IB8)
-[SWITCH TO POPOS 22.04 | How To Set Up A Windows Virtual Machine With Single GPU Passthrough | Frank Laterza](https://youtu.be/MrA9jW6iCuo)
-(Video In Portuguese, a nice in depth video of a real use case) [Games em Máquina Virtual com GPU Passthrough | Entendendo QEMU, KVM, Libvirt](https://youtu.be/IDnabc3DjYY)
+
+	* [Single GPU Passthrough Tutorial - KVM/VFIO | BlandManStudios](https://youtu.be/eTWf5D092VY)
+
+	* [GPU Pass-through On Linux/Virt-Manager | Mental Outlaw](https://youtu.be/KVDUs019IB8)
+
+	* [SWITCH TO POPOS 22.04 | How To Set Up A Windows Virtual Machine With Single GPU Passthrough | Frank Laterza](https://youtu.be/MrA9jW6iCuo)
+
+	* (Video In Portuguese, a nice in depth video of a real use case) [Games em Máquina Virtual com GPU Passthrough | Entendendo QEMU, KVM, Libvirt](https://youtu.be/IDnabc3DjYY)
 
 
 
@@ -45,10 +49,11 @@ https://www.microsoft.com/pt-br/software-download/windows10ISO
 https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/stable-virtio/virtio-win.iso
 
 ## First, enable IOMMU on your bootloader
-Chances are your distro will use another booloader like grub, so search your parameters and be sure to do the next steps corretly for each boot loader. [Gentoo Wiki writes about grub bootloader config file ](https://wiki.gentoo.org/wiki/GPU_passthrough_with_libvirt_qemu_kvm)
+Chances are your distro will use another booloader like grub, so search your parameters and be sure to do the next steps corretly for each bootloader. [Gentoo Wiki writes about grub bootloader config file ](https://wiki.gentoo.org/wiki/GPU_passthrough_with_libvirt_qemu_kvm)
 
-There is two ways of editing the bootloader the recommended way is to update via `sudo kernelstub -a "intel_iommu=on iommu=pt video=efifb:off"` more about `kernelstub --help`
-but i will teach the messy way additionally
+There is two ways of editing the bootloader the oficial way for POP-os with systemd-boot is to update via `sudo kernelstub -a "intel_iommu=on iommu=pt video=efifb:off"` more about `kernelstub --help`
+
+The Manual Way:
 1) Pop-OS 22.04 use systemd-boot so the config file will be into /boot/efi/loader/entries folder
 2) Login into root user `sudo su -`
 3) `cd` into /boot/efi/loader/entries and `ls` to see the config file.
