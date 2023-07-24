@@ -421,7 +421,7 @@ options root=UUID=aff134fa-9f96-4f4f-9100-5c7635201d9b ro quiet loglevel=0 syste
 
 
 --------
-Verify Current Boot Options:
+# Verify Current Boot Options:
 ```bash
 USER@pop-os:~$ sudo cat /etc/kernelstub/configuration
 {
