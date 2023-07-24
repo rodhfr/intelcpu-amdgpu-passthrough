@@ -51,7 +51,11 @@ https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/stable-virtio/v
 ## First, enable IOMMU on your bootloader
 Chances are your distro will use another booloader like grub, so search your parameters and be sure to do the next steps corretly for each bootloader. [Gentoo Wiki writes about grub bootloader config file ](https://wiki.gentoo.org/wiki/GPU_passthrough_with_libvirt_qemu_kvm)
 
-There is two ways of editing the bootloader the oficial way for POP-os with systemd-boot is to update via `sudo kernelstub -a "intel_iommu=on iommu=pt video=efifb:off"` more about `kernelstub --help`
+There is two ways of editing the bootloader the oficial way for POP-os with systemd-boot is to update via 
+
+`sudo kernelstub -a "intel_iommu=on iommu=pt video=efifb:off"` 
+
+More about [kernelstub](https://support.system76.com/articles/kernelstub/) `kernelstub --help`
 
 The Manual Way:
 1) Pop-OS 22.04 use systemd-boot so the config file will be into /boot/efi/loader/entries folder
@@ -227,16 +231,14 @@ kernelstub           : INFO     System information:
     Initrd Image Path:.../boot/initrd.img-6.2.6-76060206-generic
     Force-overwrite:.....False
 
-kernelstub.Installer : INFO     Copying Kernel into ESP
-kernelstub.Installer : INFO     Copying initrd.img into ESP
-kernelstub.Installer : INFO     Setting up loader.conf configuration
-kernelstub.Installer : INFO     Making entry file for Pop!_OS
-kernelstub.Installer : INFO     Backing up old kernel
-kernelstub.Installer : INFO     No old kernel found, skipping
+b.Installer : INFO     Copying Kernel into ESP
+b.Installer : INFO     Copying initrd.img into ESP
+b.Installer : INFO     Setting up loader.conf configuration
+b.Installer : INFO     Making entry file for Pop!_OS
+b.Installer : INFO     Backing up old kernel
+b.Installer : INFO     No old kernel found, skipping
 ```
 The missing modules from amdgpu is due to the modern amd graphics cards using the open-source version of the driver instead of the old and deprecated amdgpu proprietary driver.
-
-To update the config.
 
 #### Enable VFIO driver, ensure the driver is loaded early in the boot process.
 `sudo nano /etc/initramfs-tools/modules`
@@ -248,8 +250,11 @@ vfio_pci
 vfio_virqfd
 ```
 #### Load the Kernel Modules
+
 `sudo modprobe vfio`
+
 `sudo modprobe vfio_pci`
+
 `sudo modprobe vfio_iommu_type1`
 
 #### Reboot
@@ -343,7 +348,7 @@ You have to logout the session to see any change in permitions.
 ## Create Virtual Machine
 New VM > Local install Media > Browse Local > select the ISO you downloaded earlier > Foward > if there is a prompt about permissions, press yes. > Pick Memory, 4096 MB is bare minimum to windows 10 VM, 8192 should be more ok and half your machine Memory would be ok. The CPU cores doesn't matter will change later. > give it a name and BE SURE to check the box "Customize configuration before install". > Check if hypervisor is KVM, chipset is Q35 and be sure to change firmware to UEFI > CPUs tab check the box "Copy host CPU configuration" and click in Topology. Socket means the number o physical CPU dimms that you have into your motherboard, the cores are the physical cores and threads are the virtual cores, mine i5 9400f has 6 cores so i've put 3 cores and 2 threads (you can always change this things later). > Boot Options tab you set the CDROM to the top of the boot order. > Add Hardware > Storage > Browse for Virtio Driver in bus select VirtIO and apply. Click Begin the Installation > Allow to capture mouse and keyboard (if appears) > Enter the Advanced Install in Windows partitioner and add install the virtio driver, then resume to install Windows normally turning down any telemetry that you possibly can.
 
-When it's done, [download the virtio drivers](https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/stable-virtio/virtio-win.iso and install normally inside windows, You may install virtio-win-guest-tools in addition if gonna use remote desktoping > Turn down the machine.
+When it's done, [download the virtio drivers](https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/stable-virtio/virtio-win.iso) and install normally inside windows, You may install virtio-win-guest-tools in addition if gonna use remote desktoping > Turn down the machine.
 
 Change the virtual disk bus type
 Edit > Preferences > Enable XML editing
