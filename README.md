@@ -458,10 +458,13 @@ USER@pop-os:~$ sudo cat /etc/kernelstub/configuration
     "config_rev": 3
   }
 }
+```
+
 ```bash
 USER@pop-os:~$ sudo cat /proc/cmdline
 
 initrd=\EFI\Pop_OS-aff134fa-9f96-4f4f-9100-5c7635201d9b\initrd.img root=UUID=aff134fa-9f96-4f4f-9100-5c7635201d9b ro quiet loglevel=0 systemd.show_status=false splash intel_iommu=on iommu=pt video=efifb:off disable_idle_d3=1
+```
 
 
 
