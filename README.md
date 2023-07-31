@@ -394,6 +394,13 @@ initrd /EFI/Pop_OS-aff134fa-9f96-4f4f-9100-5c7635201d9b/initrd.img
 options root=UUID=aff134fa-9f96-4f4f-9100-5c7635201d9b ro quiet loglevel=0 systemd.show_status=false splash
 ```
 
+### information about kernall parameters
+https://wiki.archlinux.org/title/Kernel_parameters 
+https://wiki.archlinux.org/title/Systemd-boot
+```
+bootctl update
+```
+
 ### Remove VFIO driver configuration and update initramfs
 `sudo rm /etc/modprobe.d/vfio.conf`
 `sudo update-initramfs -u`
