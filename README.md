@@ -472,6 +472,7 @@ initrd=\EFI\Pop_OS-aff134fa-9f96-4f4f-9100-5c7635201d9b\initrd.img root=UUID=aff
 
 ---
 
+https://mathiashueber.com/windows-virtual-machine-gpu-passthrough-ubuntu/
 
 Isolation of the guest GPU
 
