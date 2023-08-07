@@ -470,6 +470,48 @@ USER@pop-os:~$ sudo cat /proc/cmdline
 initrd=\EFI\Pop_OS-aff134fa-9f96-4f4f-9100-5c7635201d9b\initrd.img root=UUID=aff134fa-9f96-4f4f-9100-5c7635201d9b ro quiet loglevel=0 systemd.show_status=false splash intel_iommu=on iommu=pt video=efifb:off disable_idle_d3=1
 ```
 
+---
+
+
+Isolation of the guest GPU
+
+In order to isolate the gfx card modify /etc/initramfs-tools/modules via:
+
+sudo nano /etc/initramfs-tools/modules and add:
+
+vfio 
+vfio_iommu_type1 
+vfio_virqfd 
+vfio_pci ids=1002:699f,1002:aae0
+
+modify /etc/modules aswell via: sudo nano /etc/modules and add:
+
+vfio 
+vfio_iommu_type1 
+vfio_pci ids=1002:699f,1002:aae0
+
+
+
+
+sudo nano /etc/modprobe.d/vfio-pci.conf
+
+options vfio-pci ids=xx:xx.x
+options vfio-pci ids=1002:699f,1002:aae0
+
+sudo update-initramfs -u
+
+
+Since the Windows 10 update 1803 the following additional entry needs to be set (otherwise BSOD) create the kvm.conf file via to add the the following line:
+
+sudo nano /etc/modprobe.d/kvm.conf 
+
+options kvm ignore_msrs=1
+
+sudo update-initramfs -u -k all
+
+after reboot
+lspci -nnv
+
 
 
 
