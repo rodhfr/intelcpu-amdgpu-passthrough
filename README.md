@@ -1,4 +1,4 @@
-# Tinkering project: AMD GPU PASSTHROUGH IN POP OS 22.04 INTEL CPU
+# Tinkering project docs: AMD GPU PASSTHROUGH IN POP OS 22.04 INTEL CPU
 This documentation is about to passthrough a secondary GPU to a QEMU virtual machine running Windows. I will not be covering how to do this with single GPU (albeit is indeed doable you just have to setup software hooks to virt-manager), nor do I will cover CPU pinning for now.
 
 ##### My system
